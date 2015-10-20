@@ -76,7 +76,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     }
     
     func presentationIndexForPageViewController(pageViewController: UIPageViewController) -> Int {
-        if let val = self.indexOfViewController(pageViewController.viewControllers.first as UIViewController) {
+        if let val = self.indexOfViewController(pageViewController.viewControllers!.first!) {
             return val
         }else{
             return 0

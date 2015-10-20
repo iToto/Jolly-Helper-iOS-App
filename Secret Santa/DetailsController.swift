@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DetailsController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+class DetailsController: UITableViewController {
 
     var toPass: String!
     var items:[String : String] = [:]
@@ -41,9 +41,9 @@ class DetailsController: UITableViewController, UITableViewDataSource, UITableVi
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("detailCell") as UITableViewCell
+        let cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("detailCell")!
         
-        cell.textLabel.text = Array(self.items.keys)[indexPath.row]
+        cell.textLabel!.text = Array(self.items.keys)[indexPath.row]
         cell.detailTextLabel?.text = Array(self.items.values)[indexPath.row]
         //cell.imageView.image = UIImage(named: "giftbox")
         
@@ -59,19 +59,19 @@ class DetailsController: UITableViewController, UITableViewDataSource, UITableVi
             var jsonErrorOptional: NSError?
             let jsonOptional:AnyObject!
             do {
-                jsonOptional = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))
-            } catch var error as NSError {
+                jsonOptional = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions(rawValue: 0))
+            } catch let error as NSError {
                 jsonErrorOptional = error
                 jsonOptional = nil
             } catch {
                 fatalError()
             }
             
-            var jsonArray = jsonOptional as! NSArray
+            let jsonArray = jsonOptional as! NSArray
             
             for var index = 0; index < jsonArray.count ; ++index {
-                var title = jsonOptional[index]["title"] as String
-                itemList.updateValue(jsonOptional[index]["description"] as String, forKey: title)
+                let title = jsonOptional[index]["title"] as! String
+                itemList.updateValue(jsonOptional[index]["description"] as! String, forKey: title)
             }
 
             

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TableViewController: UITableViewController, UITableViewDataSource, UITableViewDelegate {
+class TableViewController: UITableViewController {
     
     var items:[String : String] = [:]
     
@@ -32,9 +32,9 @@ class TableViewController: UITableViewController, UITableViewDataSource, UITable
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell") as UITableViewCell
+        let cell:UITableViewCell = self.tableView.dequeueReusableCellWithIdentifier("cell")!
         
-        cell.textLabel.text = Array(self.items.keys)[indexPath.row]
+        cell.textLabel!.text = Array(self.items.keys)[indexPath.row]
         
         return cell
     }
@@ -54,18 +54,18 @@ class TableViewController: UITableViewController, UITableViewDataSource, UITable
             var jsonErrorOptional: NSError?
             let jsonOptional: AnyObject!
             do {
-                jsonOptional = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))
-            } catch var error as NSError {
+                jsonOptional = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions(rawValue: 0))
+            } catch let error as NSError {
                 jsonErrorOptional = error
                 jsonOptional = nil
             } catch {
                 fatalError()
             }
 
-            var jsonArray = jsonOptional as! NSArray
+            let jsonArray = jsonOptional as! NSArray
             
             for var index = 0; index < jsonArray.count ; ++index {
-                nameList.updateValue(jsonOptional[index]["uid"] as String, forKey: jsonOptional[index]["name"] as String)
+                nameList.updateValue(jsonOptional[index]["uid"] as! String, forKey: jsonOptional[index]["name"] as! String)
             }
             
             handler(nameList)
