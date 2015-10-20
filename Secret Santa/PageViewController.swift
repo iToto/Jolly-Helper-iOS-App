@@ -20,9 +20,9 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
         // Do any additional setup after loading the view, typically from a nib.
         
         // self is a UIPageViewController
-        var storyboard: UIStoryboard  = UIStoryboard(name: "Main", bundle:nil)
-        var firstVC = storyboard.instantiateViewControllerWithIdentifier("NavigationTwoController") as UIViewController
-        var secondVC = storyboard.instantiateViewControllerWithIdentifier("NavigationController") as UIViewController
+        let storyboard: UIStoryboard  = UIStoryboard(name: "Main", bundle:nil)
+        let firstVC = storyboard.instantiateViewControllerWithIdentifier("NavigationTwoController") as UIViewController
+        let secondVC = storyboard.instantiateViewControllerWithIdentifier("NavigationController") as UIViewController
         
         // make a store for all of our ViewControllers
         self.listOfViewControllers = [firstVC,secondVC];
@@ -40,7 +40,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     func pageViewController(pageViewController: UIPageViewController, viewControllerBeforeViewController viewController: UIViewController) -> UIViewController? {
         // since we only have two ViewControllers for this project, we will compare with kindofclass of the passed 'viewcontroller' parameter to define
         // what's next.
-        var index: NSInteger? = self.indexOfViewController(viewController)
+        let index: NSInteger? = self.indexOfViewController(viewController)
         
         // this shouldn't happen, but if it does, give UIPageViewController firstVC
         if let val = index {
@@ -55,7 +55,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     }
 
     func pageViewController(pageViewController: UIPageViewController, viewControllerAfterViewController viewController: UIViewController) -> UIViewController? {
-        var index: NSInteger? = self.indexOfViewController(viewController)
+        let index: NSInteger? = self.indexOfViewController(viewController)
         
         if let val = index {
             if (val == self.listOfViewControllers.count-1){
@@ -68,7 +68,7 @@ class PageViewController: UIPageViewController, UIPageViewControllerDataSource, 
     }
     
     func indexOfViewController (viewController:UIViewController) -> NSInteger? {
-        return find(self.listOfViewControllers, viewController)
+        return self.listOfViewControllers.indexOf(viewController)
     }
     
     func presentationCountForPageViewController(pageViewController: UIPageViewController) -> Int {

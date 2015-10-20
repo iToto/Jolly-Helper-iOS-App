@@ -41,7 +41,12 @@ class ViewController: UIViewController {
         
         var err: NSError?
         
-        request.HTTPBody = NSJSONSerialization.dataWithJSONObject(params, options: nil, error: &err)
+        do {
+            request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
+        } catch var error as NSError {
+            err = error
+            request.HTTPBody = nil
+        }
         
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
@@ -54,12 +59,12 @@ class ViewController: UIViewController {
             
             var strData = NSString(data: data, encoding: NSUTF8StringEncoding)
             var err: NSError?
-            var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves, error: &err) as? NSArray
+            var json = NSJSONSerialization.JSONObjectWithData(data, options: .MutableLeaves) as? NSArray
             
             // json = {"response":"Success","msg":"User login successfully."}
             if(err != nil) {
                 
-                println(err!.localizedDescription)
+                print(err!.localizedDescription)
                 
             }
                 
@@ -70,13 +75,13 @@ class ViewController: UIViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     var refreshAlert = UIAlertController(title: "Congrats!", message: "Thanks for joining! You'll be receiving an email shortly with your secret santa!", preferredStyle: UIAlertControllerStyle.Alert)
                 
-                    refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction!) in
+                    refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction) in
                         let vc: AnyObject! = self.storyboard?.instantiateViewControllerWithIdentifier("PageViewController")
-                        self.showViewController(vc as UIViewController, sender: vc)
+                        self.showViewController(vc as! UIViewController, sender: vc)
                     }))
                 
-                    refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction!) in
-                        println("Handle Cancel Logic here")
+                    refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction) in
+                        print("Handle Cancel Logic here")
                     }))
                 
                     self.presentViewController(refreshAlert, animated: true, completion: nil)

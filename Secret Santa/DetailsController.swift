@@ -57,9 +57,17 @@ class DetailsController: UITableViewController, UITableViewDataSource, UITableVi
         let task = NSURLSession.sharedSession().dataTaskWithURL(url) {(data, response, error) in
             
             var jsonErrorOptional: NSError?
-            let jsonOptional:AnyObject! = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(0), error: &jsonErrorOptional)
+            let jsonOptional:AnyObject!
+            do {
+                jsonOptional = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions(rawValue: 0))
+            } catch var error as NSError {
+                jsonErrorOptional = error
+                jsonOptional = nil
+            } catch {
+                fatalError()
+            }
             
-            var jsonArray = jsonOptional as NSArray
+            var jsonArray = jsonOptional as! NSArray
             
             for var index = 0; index < jsonArray.count ; ++index {
                 var title = jsonOptional[index]["title"] as String
