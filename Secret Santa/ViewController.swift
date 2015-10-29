@@ -39,69 +39,24 @@ class ViewController: UIViewController, UITextFieldDelegate {
   
   @IBAction func submitSecretSanta(sender: UIButton) {
     
-    let request = NSMutableURLRequest(URL: NSURL(string: "https://jolly-helper-staging.herokuapp.com/persons")!)
+    let person:PersonModel = PersonModel.init(username: NameTextField.text!, email: EmailTextField.text!, age: (AgeTextField.text! as NSString).doubleValue)
+    RequestLib.createPerson(person, callback: handleSuccessReg)
+  }
+  
+  func handleSuccessReg(response: NSURLResponse) {
+    print("Response: " + response.description)
+    let refreshAlert = UIAlertController(title: "Congrats!", message: "Thanks for joining! You'll be receiving an email shortly with your secret santa!", preferredStyle: UIAlertControllerStyle.Alert)
     
+    refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction) in
+      let vc: AnyObject! = self.storyboard?.instantiateViewControllerWithIdentifier("PageViewController")
+      self.showViewController(vc as! UIViewController, sender: vc)
+    }))
     
-    let session = NSURLSession.sharedSession()
+    refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction) in
+      print("Handle Cancel Logic here")
+    }))
     
-    //var params = ["email":"\(usenNameTF.text)", "password":"\(passwordTF.text)"] as Dictionary
-    let params = ["name":"\(NameTextField.text)", "email":"\(EmailTextField.text)", "age": "\(AgeTextField.text)"] as Dictionary
-    var err: NSError?
-    
-    do {
-      request.HTTPBody = try NSJSONSerialization.dataWithJSONObject(params, options: [])
-    } catch let error as NSError {
-      err = error
-      request.HTTPBody = nil
-    }
-    
-    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.addValue("application/json", forHTTPHeaderField: "Accept")
-    
-    request.HTTPMethod = "POST"
-    
-    let task: NSURLSessionDataTask = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
-      
-      //      let strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
-      
-      do {
-        let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSArray
-      } catch let error as NSError {
-        err = error
-      }
-      
-      // json = {"response":"Success","msg":"User login successfully."}
-      if(err != nil) {
-        
-        print(err!.localizedDescription)
-        
-      }
-        
-      else {
-        
-        //success! user added to secret santa
-        
-        dispatch_async(dispatch_get_main_queue()) {
-          let refreshAlert = UIAlertController(title: "Congrats!", message: "Thanks for joining! You'll be receiving an email shortly with your secret santa!", preferredStyle: UIAlertControllerStyle.Alert)
-          
-          refreshAlert.addAction(UIAlertAction(title: "Ok", style: .Default, handler: { (action: UIAlertAction) in
-            let vc: AnyObject! = self.storyboard?.instantiateViewControllerWithIdentifier("PageViewController")
-            self.showViewController(vc as! UIViewController, sender: vc)
-          }))
-          
-          refreshAlert.addAction(UIAlertAction(title: "Cancel", style: .Default, handler: { (action: UIAlertAction) in
-            print("Handle Cancel Logic here")
-          }))
-          
-          self.presentViewController(refreshAlert, animated: true, completion: nil)
-        }
-        
-      }
-      
-    })
-    
-    task.resume()
-    
+    self.presentViewController(refreshAlert, animated: true, completion: nil)
   }
   
   func registerForKeyboardNotifications() {
