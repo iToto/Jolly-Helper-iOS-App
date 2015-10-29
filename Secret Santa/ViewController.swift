@@ -8,23 +8,33 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITextFieldDelegate {
   
+  @IBOutlet var scrollView: UIScrollView!
   @IBOutlet var NameLabel: UILabel! = nil
   @IBOutlet var NameTextField: UITextField!
   @IBOutlet var AgeLabel: UILabel! = nil
   @IBOutlet var AgeTextField: UITextField!
   @IBOutlet var EmailLabel: UILabel! = nil
   @IBOutlet var EmailTextField: UITextField!
+
+  var activeField: UITextField?
+  
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    scrollView.contentSize = view.frame.size
+    registerForKeyboardNotifications()
     // Do any additional setup after loading the view, typically from a nib.
   }
   
   override func didReceiveMemoryWarning() {
     super.didReceiveMemoryWarning()
     // Dispose of any resources that can be recreated.
+  }
+  
+  override func viewWillDisappear(animated: Bool) {
+    deregisterFromKeyboardNotifications()
   }
   
   @IBAction func submitSecretSanta(sender: UIButton) {
@@ -52,7 +62,7 @@ class ViewController: UIViewController {
     
     let task: NSURLSessionDataTask = session.dataTaskWithRequest(request, completionHandler: {data, response, error -> Void in
       
-//      let strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
+      //      let strData = NSString(data: data!, encoding: NSUTF8StringEncoding)
       
       do {
         let json = try NSJSONSerialization.JSONObjectWithData(data!, options: .MutableLeaves) as? NSArray
@@ -92,6 +102,62 @@ class ViewController: UIViewController {
     
     task.resume()
     
+  }
+  
+  func registerForKeyboardNotifications() {
+    //Adding notifies on keyboard appearing
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWasShown:", name: UIKeyboardWillShowNotification, object: nil)
+    NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillBeHidden:", name: UIKeyboardWillHideNotification, object: nil)
+  }
+  
+  
+  func deregisterFromKeyboardNotifications() {
+    //Removing notifies on keyboard appearing
+    NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillShowNotification, object: nil)
+    NSNotificationCenter.defaultCenter().removeObserver(self, name: UIKeyboardWillHideNotification, object: nil)
+  }
+  
+  func keyboardWasShown(notification: NSNotification) {
+    //Need to calculate keyboard exact size due to Apple suggestions
+    self.scrollView.scrollEnabled = true
+    let info : NSDictionary = notification.userInfo!
+    let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue().size
+    let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, keyboardSize!.height, 0.0)
+    
+    self.scrollView.contentInset = contentInsets
+    self.scrollView.scrollIndicatorInsets = contentInsets
+    
+    var aRect : CGRect = self.view.frame
+    aRect.size.height -= keyboardSize!.height
+    if let activeFieldPresent = activeField
+    {
+      if (!CGRectContainsPoint(aRect, activeField!.frame.origin))
+      {
+        self.scrollView.scrollRectToVisible(activeField!.frame, animated: true)
+      }
+    }
+    
+    
+  }
+  
+  func keyboardWillBeHidden(notification: NSNotification) {
+    //Once keyboard disappears, restore original positions
+    let info : NSDictionary = notification.userInfo!
+    let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.CGRectValue().size
+    let contentInsets : UIEdgeInsets = UIEdgeInsetsMake(0.0, 0.0, -keyboardSize!.height, 0.0)
+    self.scrollView.contentInset = contentInsets
+    self.scrollView.scrollIndicatorInsets = contentInsets
+    self.view.endEditing(true)
+    self.scrollView.scrollEnabled = false
+    
+  }
+  
+  func textFieldDidBeginEditing(textField: UITextField) {
+    activeField = textField
+  }
+  
+  func textFieldDidEndEditing(textField: UITextField) {
+    activeField = nil
   }
 }
 
