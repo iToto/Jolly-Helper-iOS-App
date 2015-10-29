@@ -21,7 +21,7 @@
                         <viewControllerLayoutGuide type="top" id="jyV-Pf-zRb"/>
                         <viewControllerLayoutGuide type="bottom" id="2fi-mo-0CV"/>
                     </layoutGuides>
-                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS">
+                    <view key="view" contentMode="scaleToFill" id="kh9-bI-dsS" customClass="UIScrollView">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
@@ -162,6 +162,7 @@
                         <outlet property="EmailTextField" destination="ER8-Bx-eEc" id="j7W-YM-OCi"/>
                         <outlet property="NameLabel" destination="aVt-Sr-yl8" id="MRN-f5-F2G"/>
                         <outlet property="NameTextField" destination="RIF-G0-l0i" id="ajk-0T-RM1"/>
+                        <outlet property="scrollView" destination="kh9-bI-dsS" id="BaB-oT-E0K"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
@@ -205,7 +206,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SWc-fl-c2v" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="719" y="1112"/>
+            <point key="canvasLocation" x="719" y="1118"/>
         </scene>
         <!--Details Controller-->
         <scene sceneID="UYX-yg-rUg">
